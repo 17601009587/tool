@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!--给appName赋值-->
+    <property name="appName" value="DEMO"/>
+    <property name="log.path" value="/log/data/demo/demo.log"/>
+    <!--日志输出到控制台-->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!--%d{yyyy-MM-dd HH:mm:ss.SSS} 为时间格式-->
+            <!--%X{traceId} 为系统内MDC中rid的值-->
+            <!--${appName} 为上面变量appName的值-->
+            <!--%-5level 为日志级别-->
+            <!--%msg%n 为系统内log打印的日志内容-->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread][%X{traceId}] || ${appName} || %-5level %logger Line:%-3L - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.path}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.path}.%d{yyyy-MM-dd}.zip</fileNamePattern>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread][%X{traceId}] || ${appName} || %-5level %logger Line:%-3L - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+
+    <springProfile name="dev">
+        <logger name="com.example.demo.dao" level="debug"/>
+    </springProfile>
+
+    <root level="info">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="file"/>
+    </root>
+</configuration>

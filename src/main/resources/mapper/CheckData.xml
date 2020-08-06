@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.CheckDataDao">
+
+
+    <select id="queryLoanData" resultType="java.lang.Integer">
+        select count(*) from t2_loandetail_bak
+        <where>
+            amount=#{amount} and loan_name=#{loanName}
+            and recevi_name=#{receviName}
+            <if test="loanTime!=null">
+                and loan_time=#{loanTime}
+            </if>
+            <if test="loanAccount!=null">
+                and loan_account=#{loanAccount}
+            </if>
+            <if test="receviAccount!=null">
+                and recevi_account=#{receviAccount}
+            </if>
+        </where>
+
+    </select>
+
+    <select id="queryLoanXmjrData" resultType="com.example.demo.entity.LoanDetail">
+        SELECT
+            i.investment_amount amount,
+            date_format( b.actual_loan_time, '%Y-%m-%d' ) loanTime,
+            p.regname loanName,
+            case
+           <![CDATA[ when p.create_time>='2017-03-15 00:00:00' and p.create_time<='2018-03-15 00:00:00']]>
+            then p.trust_account_old
+            else p.trust_account
+            end  loanAccount ,
+            case
+        <![CDATA[ when bp.reg_time>='2017-03-15 00:00:00' and bp.reg_time<='2018-03-15 00:00:00']]>
+            then bp.trust_account_old
+            else bp.trust_account
+            end  receviAccount ,
+            bp.NAME receviName
+
+        FROM
+            t2_invest i
+            LEFT JOIN t2_borrow b ON i.subject_number = b.subject_number
+            LEFT JOIN t2_lender_person p ON i.investor = p.id
+            LEFT JOIN t2_borrower_person bp ON b.borrower_idNO = bp.idNo
+        WHERE
+            b.provide_subject_unique_identification = #{pcode} and i.turnover_times=0
+    </select>
+    <select id="queryTranXmjrData" resultType="com.example.demo.entity.TransferDetail">
+      SELECT
+            DATE_FORMAT( r.received_time, '%Y-%m-%d' ) compensationDate,
+            r.subject_number subjectNumber,
+            p.regname lenderName,
+            p.idNo lenderIdNo,
+            p.mobilePhone lenderMobieleNo,
+            p.trust_account lenderAccount,
+            i.investment_amount lenderAmount,
+            r.received_amount + r.received_interest  compensationAmount
+        FROM
+            t2_invest_repayment r
+            LEFT JOIN t2_borrow b ON r.subject_number = b.subject_number
+            LEFT JOIN t2_lender_person p ON r.investor = p.id
+            LEFT JOIN t2_invest i ON r.invest_id = i.invest_id
+        WHERE
+            b.provide_subject_unique_identification = #{pcode}
+            AND r.payment_status =4
+            and r.received_time>'2017-03-14 23:59:59'
+    </select>
+    <select id="queryTranData" resultType="java.lang.Integer">
+        select count(*) from t2_transferdetail_bak where
+	    subject_number=#{subjectNumber}
+	    and compensation_date=#{compensationDate}
+	    and lender_name=#{lenderName}
+	    and lender_id_no=#{lenderIdNo}
+	    and lender_account=#{lenderAccount}
+	    and lender_amount=#{lenderAmount}
+	    and compensation_amount=#{compensationAmount}
+
+
+    </select>
+
+
+</mapper>
