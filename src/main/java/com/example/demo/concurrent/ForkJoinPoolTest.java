@@ -49,7 +49,7 @@ public class ForkJoinPoolTest {
         stopWatch.stop();
         log.info("sender.size -> {}", sender.size());
         log.info("receiver.size -> {}-{}", receiver.size(), Sets.newHashSet(receiver).size());
-        log.info("TotalTimeMillis1 -> " + stopWatch.getTotalTimeMillis());
+        log.info("TotalTimeMillis -> " + stopWatch.getTotalTimeMillis());
 
     }
 
