@@ -18,7 +18,7 @@ public class FormateTest {
         oldPrice= Optional.ofNullable(objectObjectHashMap.get("price5")).map(x->Double.valueOf(x)).orElse(oldPrice);
         System.out.println("*****"+oldPrice);
 
-
+        System.out.println("666");
         System.out.println(1);
 
         Map<String, List<Integer>> rootNodeExsit =Maps.newHashMap();
